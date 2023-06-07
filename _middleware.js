@@ -1,3 +1,13 @@
+//
+// Taken from cloudflare official web page:
+// https://developers.cloudflare.com/pages/platform/functions/examples/cors-headers/
+//
+// Also on this github repo:
+// https://github.com/cloudflare/cloudflare-docs
+//
+// This code is NOT under the TTS QUEST PUBLIC LICENSE 
+// 
+
 // Respond to OPTIONS method
 export const onRequestOptions: PagesFunction = async () => {
   return new Response(null, {
