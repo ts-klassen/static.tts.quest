@@ -1,5 +1,6 @@
 class TtsQuestV3Voicevox extends Audio {
   mainResponse; downloadElement; indicatorText; audioStatus;
+  onStreamingReady; onError; onReTry;
   constructor(speakerId, text, ttsQuestApiKey) {
     super();
     this.indicatorText = {
@@ -12,6 +13,7 @@ class TtsQuestV3Voicevox extends Audio {
       text: text
     };
     this.#genDlElmInit();
+    this.onStreamingReady = this.onError = this.onReTry = function(){};
     this.audioStatus = {
       success: false,
       isAudioReady: false,
@@ -31,16 +33,20 @@ class TtsQuestV3Voicevox extends Audio {
     .then(response => response.json())
     .then(response => {
       if (typeof response.retryAfter !== 'undefined') {
+        owner.onReTry();
         setTimeout(owner.#main, 1000*(1+response.retryAfter), owner, query);
       }
       else if (typeof response.mp3StreamingUrl !== 'undefined') {
         owner.mainResponse = response;
         owner.src = response.mp3StreamingUrl;
+        owner.onStreamingReady();
       }
       else if (typeof response.errorMessage !== 'undefined') {
+        owner.onError();
         throw new Error(response.errorMessage);
       }
       else {
+        owner.onError();
         throw new Error("serverError");
       }
     });
