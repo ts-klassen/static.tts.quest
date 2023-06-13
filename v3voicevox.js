@@ -1,8 +1,17 @@
 class TtsQuestV3Voicevox extends Audio {
-  mainResponse; downloadElement; audioStatus;
+  mainResponse; downloadElement; indicatorText; audioStatus;
   onStreamingReady; onError; onReTry;
   constructor(speakerId, text, ttsQuestApiKey) {
     super();
+    this.indicatorText = {
+      download: "Download", 
+      preparing: "Preparing...",
+      wav: "wav",
+      separator: " | ",
+      mp3: "mp3",
+      error: "Error",
+      text: text
+    };
     this.#genDlElmInit();
     this.onStreamingReady = this.onError = this.onReTry = function(){};
     this.audioStatus = {
@@ -59,15 +68,6 @@ class TtsQuestV3Voicevox extends Audio {
   }
   #genDlElmInit() {
     this.downloadElement = document.createElement('span');
-    this.downloadElement.indicatorText = {
-      download: "Download", 
-      preparing: "Preparing...",
-      wav: "wav",
-      separator: " | ",
-      mp3: "mp3",
-      error: "Error",
-      text: text
-    };
     this.downloadElement.voicevox = this;
     this.downloadElement.innerHTML = this.indicatorText.download;
     
