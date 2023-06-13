@@ -70,6 +70,9 @@ class TtsQuestV3Voicevox extends Audio {
     this.downloadElement = document.createElement('span');
     this.downloadElement.voicevox = this;
     this.downloadElement.innerHTML = this.indicatorText.download;
+    this.downloadElement.onDownloadReady = function(){};
+    this.downloadElement.onError =  function(){};
+    this.downloadElement.onReTry = function(){};
     
     // copy the style of <a> tag to downloadElement
     var tempLink = document.createElement('a');
@@ -91,6 +94,7 @@ class TtsQuestV3Voicevox extends Audio {
     this.downloadElement.checkDownload = function(owner) {
       if (owner.voicevox.audioStatus.isAudioError) {
         owner.innerHTML = owner.voicevox.indicatorText.error;
+        owner.onError();
         return;
       }
       if (owner.voicevox.audioStatus.isAudioReady) {
@@ -110,6 +114,7 @@ class TtsQuestV3Voicevox extends Audio {
         owner.appendChild(wav);
         owner.appendChild(separator);
         owner.appendChild(mp3);
+        owner.onDownloadReady();
         return;
       }
       owner.voicevox.updateAudioStatus();
@@ -117,6 +122,7 @@ class TtsQuestV3Voicevox extends Audio {
       owner.innerHTML = preparing+' ('+owner.checkCount+')';
       owner.checkCount++;
       setTimeout(owner.checkDownload, 1000, owner);
+      owner.onReTry();
     }
   }
 }
