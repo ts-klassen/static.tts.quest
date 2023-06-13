@@ -1,9 +1,9 @@
 class TtsQuestV3Voicevox extends Audio {
-  mainResponse; downloadElement; indicatorText; audioStatus;
+  mainResponse; downloadElement; audioStatus;
   onStreamingReady; onError; onReTry;
   constructor(speakerId, text, ttsQuestApiKey) {
     super();
-    this.indicatorText = {
+    this.downloadElement.indicatorText = {
       download: "Download", 
       preparing: "Preparing...",
       wav: "wav",
