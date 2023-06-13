@@ -59,8 +59,6 @@ class TtsQuestV3Voicevox extends Audio {
   }
   #genDlElmInit() {
     this.downloadElement = document.createElement('span');
-    this.downloadElement.voicevox = this;
-    this.downloadElement.innerHTML = this.indicatorText.download;
     this.downloadElement.indicatorText = {
       download: "Download", 
       preparing: "Preparing...",
@@ -70,6 +68,8 @@ class TtsQuestV3Voicevox extends Audio {
       error: "Error",
       text: text
     };
+    this.downloadElement.voicevox = this;
+    this.downloadElement.innerHTML = this.indicatorText.download;
     
     // copy the style of <a> tag to downloadElement
     var tempLink = document.createElement('a');
