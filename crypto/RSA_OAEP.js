@@ -14,7 +14,7 @@ class RSA_OAEP {
         return crypto.subtle.generateKey(ec, isExtractable, usage);
     }
 
-    // @spec encrypt(object(), public_key() | key_pair()) -> array_buffer().
+    // @spec encrypt(string(), public_key() | key_pair()) -> array_buffer().
     static encrypt(data, key) {
         if (typeof key.publicKey !== 'undefined') {
             key = key.publicKey;
@@ -25,11 +25,11 @@ class RSA_OAEP {
                 //label: Uint8Array([...]) //optional
             },
             key, //from generate or import
-            this.#s2ab(JSON.stringify(data)) //ArrayBuffer of data you want to encrypt
+            this.#s2ab(data) //ArrayBuffer of data you want to encrypt
         );
     }
 
-    // @spec decrypt(array_buffer(), private_key() | key_pair()) -> object().
+    // @spec decrypt(array_buffer(), private_key() | key_pair()) -> stirng().
     static async decrypt(data, key) {
         if (typeof key.privateKey !== 'undefined') {
             key = key.privateKey;
@@ -42,7 +42,7 @@ class RSA_OAEP {
             key, //from generateKey or importKey above
             data //ArrayBuffer of the data
         );
-        return JSON.parse(this.#ab2s(decrypted));
+        return this.#ab2s(decrypted);
     }
 
     // @spec import(public_jwk_map())  -> public_key();
