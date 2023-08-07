@@ -15,7 +15,21 @@ class RSA_OAEP {
     }
 
     // @spec encrypt(string(), public_key() | key_pair()) -> array_buffer().
-    static encrypt(data, key) {
+    static async encrypt(str, key) {
+        var buf = this.#s2ab(str);
+        var array = [];
+        var promiseArray = [];
+        for (var i=0;i<=Math.floor((buf.byteLength-1)/214);i++) {
+            promiseArray[i] = this.#encrypt(buf.slice(i*214, (i+1)*214), key);
+        }
+        for (var i=0;i<promiseArray.length;i++) {
+            array[i] = await promiseArray[i];
+        }
+        var blob = new Blob(array);
+        return await blob.arrayBuffer();
+    }
+
+    static #encrypt(data, key) {
         if (typeof key.publicKey !== 'undefined') {
             key = key.publicKey;
         }
@@ -25,12 +39,25 @@ class RSA_OAEP {
                 //label: Uint8Array([...]) //optional
             },
             key, //from generate or import
-            this.#s2ab(data) //ArrayBuffer of data you want to encrypt
+            data //ArrayBuffer of data you want to encrypt
         );
     }
 
     // @spec decrypt(array_buffer(), private_key() | key_pair()) -> stirng().
     static async decrypt(data, key) {
+        var array = [];
+        var promiseArray = [];
+        for (var i=0;i<data.byteLength/256;i++) {
+            promiseArray[i] = this.#decrypt(data.slice(i*256, (i+1)*256), key);
+        }
+        for (var i=0;i<promiseArray.length;i++) {
+            array[i] = await promiseArray[i];
+        }
+        var blob = new Blob(array);
+        return this.#ab2s(await blob.arrayBuffer());
+    }
+
+    static async #decrypt(data, key) {
         if (typeof key.privateKey !== 'undefined') {
             key = key.privateKey;
         }
@@ -42,7 +69,7 @@ class RSA_OAEP {
             key, //from generateKey or importKey above
             data //ArrayBuffer of the data
         );
-        return this.#ab2s(decrypted);
+        return decrypted;
     }
 
     // @spec import(public_jwk_map())  -> public_key();
