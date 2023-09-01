@@ -99,19 +99,10 @@ class RSA_OAEP {
 
     // @spec #s2ab(string()) -> array_buffer().
     static #s2ab(src) {
-        return (new Uint8Array([].map.call(src, function(c) {
-            return c.charCodeAt(0)
-        }))).buffer;
+        return new TextEncoder().encode(src).buffer;
     }
     // @spec #ab2s(array_buffer()) -> string().
     static #ab2s(buf) {
-        var tmp = [];
-        var len = 1024;
-        for (var p = 0; p < buf.byteLength; p += len) {
-            tmp.push(String.fromCharCode.apply("", new Uint8Array(
-                buf.slice(p, p + len)
-            )));
-        }
-        return tmp.join("");
+        return new TextDecoder().decode(buf);
     }
 }
